@@ -12,7 +12,8 @@ import java.util.*;
  */
 public class Database
 {
-    /*class Entry
+    /*
+    class Entry
     {
         public Integer first;
         public Integer second;
@@ -21,7 +22,8 @@ public class Database
             this.first = first;
             this.second = second;
         }
-    }*/
+    }
+    */
 
     private final List< List<Integer> > transactions;
     private final Set<Integer> uniqEl;
