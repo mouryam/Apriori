@@ -10,9 +10,10 @@ import java.util.*;
 /**
  * Created by Mourya on 2/14/2016.
  */
-public class Database {
-
-    class Entry {
+public class Database
+{
+    /*class Entry
+    {
         public Integer first;
         public Integer second;
         Entry() {}
@@ -20,14 +21,14 @@ public class Database {
             this.first = first;
             this.second = second;
         }
-    }
-    private final List< List< Integer > > transactions;
-    private final List< Integer > elements;
+    }*/
 
-    public Database(String dataFileName) throws Exception {
+    private final List< List<Integer> > transactions;
+    private final Set<Integer> uniqEl;
 
-        transactions = new ArrayList< List< Integer > >();
-        elements = new ArrayList< Integer >();
+    public Database(String dataFileName) throws Exception
+    {
+        transactions = new ArrayList< List<Integer> >();
 
         FileInputStream fin = new FileInputStream(dataFileName);
         InputStreamReader istream = new InputStreamReader(fin);
@@ -37,43 +38,34 @@ public class Database {
 
         double startTime = System.currentTimeMillis();
 
-        while((line = stdin.readLine()) != null) {
-            List< Integer > transaction = new ArrayList< Integer >();
+        /* Populate 'transactions' List with each sorted transaction */
+        while((line = stdin.readLine()) != null)
+        {
+            List<Integer> trans = new ArrayList<Integer>();
             String[] temp = line.split("\\s+");
 
-            for(String num : temp) {
-                transaction.add(Integer.parseInt(num));
-            }
+            for(String num : temp) trans.add(Integer.parseInt(num));
 
-            if(transaction.isEmpty()) continue;
+            if(trans.isEmpty()) continue;
 
-            Collections.sort(transaction);
-            transactions.add(transaction);
+            Collections.sort(trans);
+            transactions.add(trans);
         }
 
+        /* Close input stream readers */
         fin.close();
         istream.close();
         stdin.close();
 
-        int n = transactions.size();
-        int[] header = new int[n];
-        PriorityQueue< Entry > pQ = new PriorityQueue< Entry >(n, new Comparator< Entry >() {
-            public int compare(Entry item1, Entry item2) {
-                if(item1.first.equals(item2.first)) {
-                    return item1.second.compareTo(item2.second);
-                } else {
-                    return item1.first.compareTo(item2.first);
-                }
+
+        /* Create a set of unique elements */
+        uniqEl = new LinkedHashSet<>();
+
+        for (List<Integer> t : transactions) {
+            for (Integer n : t) {
+                uniqEl.add(n);
             }
-        });
-
-        for(int i = 0; i < n; i++) {
-            header[i] = 0;
-            pQ.add(new Entry(transactions.get(i).get(header[i]), i));
         }
-
-        //TODO
-        // Make a list of all unique elements and store it in items
 
 
         double endTime = System.currentTimeMillis();
