@@ -27,7 +27,7 @@ public class Main
         Map< List<Integer>, Integer > frequentMap = new HashMap<>();
 
         frequentMap = test.start();
-        test.printPatterns();
+        //System.out.println(frequentMap);
 
 
         /* Print frequentMap's data to output file */
