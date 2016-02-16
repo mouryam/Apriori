@@ -10,21 +10,22 @@ import java.util.*;
 public class Apriori{
     private final Database db;
     private final List< Integer > itemset;
-    private final List< List< Integer > > frequent;
+    private final HashMap< List< Integer > , Integer> frequent;
     private double minSup;
 
     public Apriori(Database db, double minSup){
         this.db = db;
         itemset = db.items;
-        frequent = new ArrayList< List<Integer>>();
+        frequent = new HashMap < List< Integer > , Integer >();
         this.minSup = minSup;
     }
 
-    public void start() {
+    public HashMap < List< Integer > , Integer > start() {
         double startTime = System.currentTimeMillis();
 
         List< List< Integer > > Ck = new ArrayList< List< Integer > >();
         List< List< Integer > > Lk = new ArrayList< List< Integer > >();
+        List<Integer> CkMinSup = new ArrayList<>();
         HashMap< List< Integer>, Integer > seenK = new HashMap< List< Integer >, Integer >();
 
         int k = 1;
@@ -54,6 +55,7 @@ public class Apriori{
                 }
                 // else add to frequent candidate list
                 Ck.add(kth);
+                CkMinSup.add(count);
             }
 
             System.out.println("Ck: " + Ck);
@@ -61,10 +63,10 @@ public class Apriori{
             if(Ck.isEmpty()) break;
 
             // Add current candidates to frequent list
-            for(List< Integer > freq : Ck) {
-                frequent.add(freq);
+            for (int i = 0; i < Ck.size(); i++) {
+                frequent.put(Ck.get(i),CkMinSup.get(i));
                 // Store frequent sets to utilize in pruning in seenK
-                seenK.put(freq, k);
+                seenK.put(Ck.get(i), k);
             }
 ///////////// TODO
             // Create join method
@@ -119,6 +121,9 @@ public class Apriori{
 
         double endTime = System.currentTimeMillis();
         System.out.println("Apriori completed in " + (endTime - startTime)/1000.0 + " seconds");
+
+
+        return frequent;
     }
 
     private List<List<Integer>> prune(List<List<Integer>> temp, HashMap<List<Integer>, Integer> seenK, int k) {
@@ -155,13 +160,13 @@ public class Apriori{
         return prunedCandidates;
     }
 
-    public void printPatterns() {
+/*    public void printPatterns() {
         System.out.println("Frequent Itemsets");
         for(List< Integer > pattern : frequent) {
             System.out.println(pattern);
         }
         System.out.println("Total " + frequent.size() + " itemsets");
-    }
+    }*/
 
     private int prefixLen(List< Integer > left, List< Integer > right) {
         int len;

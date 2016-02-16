@@ -2,6 +2,8 @@ package com.company;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class Main {
 
@@ -16,8 +18,11 @@ public class Main {
         System.out.print(Arrays.toString(args));
 
         Apriori test = new Apriori(db, Double.parseDouble(args[1]));
-        test.start();
-        test.printPatterns();
+
+        // Hashmap contains key value pair
+        // key is the set, and the value is its frequency count
+        HashMap<List<Integer>, Integer> frequentSets = new HashMap<>();
+        frequentSets = test.start();
 
     }
 
