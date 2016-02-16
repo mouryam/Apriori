@@ -1,6 +1,8 @@
 package com.company;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.List;
 
 public class Main
 {
@@ -32,10 +34,13 @@ public class Main
             e.printStackTrace();
         }
 
-        /* Run Apriori algorithm */
-        //Apriori test = new Apriori(args[3], db, Double.parseDouble(args[1]));
-        //test.start();
+        /*Run Apriori algorithm */
+        Apriori test = new Apriori(db, Double.parseDouble(args[1]));
+        HashMap<List<Integer>, Integer> frequentMap = new HashMap<>();
 
+        frequentMap= test.start();
+        test.printPatterns();
+        //TODO Use frequentMap which contains the frequent set and frequency number as a key value to output into a file
         /* Create output file */
         File f = new File("output.txt");
         try
@@ -54,4 +59,5 @@ public class Main
             System.out.println(ex);
         }
     }
+
 }

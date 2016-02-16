@@ -12,25 +12,14 @@ import java.util.*;
  */
 public class Database
 {
-    /*
-    class Entry
-    {
-        public Integer first;
-        public Integer second;
-        Entry() {}
-        Entry(Integer first, Integer second) {
-            this.first = first;
-            this.second = second;
-        }
-    }
-    */
-
-    private final List< List<Integer> > transactions;
-    private final Set<Integer> uniqEl;
+    public final List< List<Integer> > transactions;
+    public final Set<Integer> uniqEl;
 
     public Database(String dataFileName) throws Exception
     {
         transactions = new ArrayList< List<Integer> >();
+        /* Create a set of unique elements */
+        uniqEl = new LinkedHashSet<>();
 
         FileInputStream fin = new FileInputStream(dataFileName);
         InputStreamReader istream = new InputStreamReader(fin);
@@ -59,10 +48,6 @@ public class Database
         istream.close();
         stdin.close();
 
-
-        /* Create a set of unique elements */
-        uniqEl = new LinkedHashSet<>();
-
         for (List<Integer> t : transactions) {
             for (Integer n : t) {
                 uniqEl.add(n);
@@ -72,5 +57,30 @@ public class Database
 
         double endTime = System.currentTimeMillis();
         System.out.println("Database created in " + (endTime - startTime)/1000.0 + " seconds");
+    }
+    public int scanDatabase(List< Integer > transaction) {
+        int count = 0;
+        for(List< Integer > row : transactions) {
+            boolean found = true;
+            for(Integer item : transaction) {
+                int idx, stp, st = 0, en = row.size(), cnt = en - st;
+                while(cnt > 0) {
+                    stp = cnt >> 1; idx = st + stp;
+                    if(row.get(idx).compareTo(item) < 0) {
+                        st = ++idx;
+                        cnt -= stp+1;
+                    }
+                    else {
+                        cnt = stp;
+                    }
+                }
+                if(st == row.size() || row.get(st).compareTo(item) != 0) {
+                    found = false;
+                    break;
+                }
+            }
+            if(found) count++;
+        }
+        return count;
     }
 }

@@ -9,13 +9,13 @@ import java.util.*;
  */
 public class Apriori{
     private final Database db;
-    private final List< Integer > itemset;
+    private final Set< Integer > itemset;
     private final HashMap< List< Integer > , Integer> frequent;
     private double minSup;
 
     public Apriori(Database db, double minSup){
         this.db = db;
-        itemset = db.items;
+        itemset = db.uniqEl;
         frequent = new HashMap < List< Integer > , Integer >();
         this.minSup = minSup;
     }
@@ -68,7 +68,7 @@ public class Apriori{
                 // Store frequent sets to utilize in pruning in seenK
                 seenK.put(Ck.get(i), k);
             }
-///////////// TODO
+/*
             // Create join method
             List< List< Integer > > temp = new ArrayList< List< Integer > >();
             List< Integer > current = new ArrayList< Integer >();
@@ -89,9 +89,8 @@ public class Apriori{
 
                 }
             }
-/////////////////////////////////// END OF to do
+*/
 
-/* uncomment this to test and comment out all of above to do
             int[] prefixlen = new int[Ck.size()];
             prefixlen[0] = 0;
             for(int i = 1; i < Ck.size(); i++) {
@@ -110,7 +109,7 @@ public class Apriori{
                     else break;
                 }
             }
-*/
+
             System.out.println("Temporary: " + temp);
             Lk.clear();
             Lk = prune(temp, seenK, k);
@@ -160,13 +159,13 @@ public class Apriori{
         return prunedCandidates;
     }
 
-/*    public void printPatterns() {
+    public void printPatterns() {
         System.out.println("Frequent Itemsets");
-        for(List< Integer > pattern : frequent) {
+        for(List< Integer > pattern : frequent.keySet()) {
             System.out.println(pattern);
         }
         System.out.println("Total " + frequent.size() + " itemsets");
-    }*/
+    }
 
     private int prefixLen(List< Integer > left, List< Integer > right) {
         int len;
