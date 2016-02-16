@@ -10,24 +10,27 @@ import java.util.*;
 /**
  * Created by Mourya on 2/14/2016.
  */
-public class Database {
-
-    class Entry {
-        public Integer first;
-        public Integer second;
-        Entry() {}
-        Entry(Integer first, Integer second) {
-            this.first = first;
-            this.second = second;
-        }
+class Entry {
+    public Integer first;
+    public Integer second;
+    Entry() {}
+    Entry(Integer first, Integer second) {
+        this.first = first;
+        this.second = second;
     }
-    private final List< List< Integer > > transactions;
-    private final List< Integer > elements;
+}
+
+public class Database {
+    public static boolean debugger = false;
+
+    public final List< List< Integer > > transactions;
+    public final List< Integer > items;
 
     public Database(String dataFileName) throws Exception {
+        System.out.println("Processing " + dataFileName);
 
         transactions = new ArrayList< List< Integer > >();
-        elements = new ArrayList< Integer >();
+        items = new ArrayList< Integer >();
 
         FileInputStream fin = new FileInputStream(dataFileName);
         InputStreamReader istream = new InputStreamReader(fin);
@@ -72,11 +75,48 @@ public class Database {
             pQ.add(new Entry(transactions.get(i).get(header[i]), i));
         }
 
-        //TODO
-        // Make a list of all unique elements and store it in items
-
+        while(!pQ.isEmpty()) {
+            Entry peek = pQ.remove();
+            int val = peek.first;
+            int idx = peek.second;
+            if(items.isEmpty() || items.get(items.size()-1) < val) {
+                items.add(val);
+            }
+            while(header[idx] < transactions.get(idx).size() && transactions.get(idx).get(header[idx]) <= val) {
+                header[idx]++;
+            }
+            if(header[idx] < transactions.get(idx).size()) {
+                pQ.add(new Entry(transactions.get(idx).get(header[idx]), idx));
+            }
+        }
 
         double endTime = System.currentTimeMillis();
         System.out.println("Database created in " + (endTime - startTime)/1000.0 + " seconds");
+    }
+
+    public int scanDatabase(List< Integer > transaction) {
+        int count = 0;
+        for(List< Integer > row : transactions) {
+            boolean found = true;
+            for(Integer item : transaction) {
+                int idx, stp, st = 0, en = row.size(), cnt = en - st;
+                while(cnt > 0) {
+                    stp = cnt >> 1; idx = st + stp;
+                    if(row.get(idx).compareTo(item) < 0) {
+                        st = ++idx;
+                        cnt -= stp+1;
+                    }
+                    else {
+                        cnt = stp;
+                    }
+                }
+                if(st == row.size() || row.get(st).compareTo(item) != 0) {
+                    found = false;
+                    break;
+                }
+            }
+            if(found) count++;
+        }
+        return count;
     }
 }

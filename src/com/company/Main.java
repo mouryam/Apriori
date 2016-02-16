@@ -1,6 +1,7 @@
 package com.company;
 
 import java.io.*;
+import java.util.Arrays;
 
 public class Main {
 
@@ -8,13 +9,15 @@ public class Main {
 
         Database db= null;
         try{
-            db = new Database(args[1]);
+            db = new Database(args[0]);
         } catch (Exception e){
             e.printStackTrace();
         }
+        System.out.print(Arrays.toString(args));
 
-        Apriori test = new Apriori(args[3], db, Double.parseDouble(args[2]));
+        Apriori test = new Apriori(db, Double.parseDouble(args[1]));
         test.start();
+        test.printPatterns();
 
     }
 
@@ -23,7 +26,7 @@ public class Main {
     // May not need
     public static void printFile(String input) {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream("output.txt"), "utf-8"))) {
+                new FileOutputStream("input.txt"), "utf-8"))) {
             writer.write(input);
         } catch (IOException e) {
             e.printStackTrace();
