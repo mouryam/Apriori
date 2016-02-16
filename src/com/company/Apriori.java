@@ -1,9 +1,4 @@
 package com.company;
-
-import com.sun.xml.internal.bind.v2.TODO;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.*;
-import com.sun.xml.internal.fastinfoset.sax.SystemIdResolver;
-
 import java.util.*;
 import java.util.List;
 
