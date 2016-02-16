@@ -1,6 +1,6 @@
 Our implementation of Apriori uses 3 classes:
 
-1) DATABASE: Takes dataset file and creates a list of transactions (ArrayList<List<Integer>>) and a set of unique elements (LinkedHashSet<>);
+1) DATABASE: Takes dataset file and creates a list of transactions (ArrayList< List<Integer> >) and a set of unique elements (LinkedHashSet<>);
 
 2) APRIORI: Takes data structures created by Database class and performs the Apriori algorithm, returning a HashMap of the frequent itemsets;
 
