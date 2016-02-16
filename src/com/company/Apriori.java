@@ -23,8 +23,7 @@ public class Apriori{
 
         List< List< Integer > > Ck = new ArrayList< List< Integer > >();
         List< List< Integer > > Lk = new ArrayList< List< Integer > >();
-        List<Integer> CkMinSup = new ArrayList<>();
-        HashMap< List< Integer>, Integer > seenK = new HashMap< List< Integer >, Integer >();
+        HashMap< List< Integer>, Integer > seen = new HashMap< List< Integer >, Integer >();
 
         int k = 1;
         int n = db.transactions.size();
@@ -36,11 +35,11 @@ public class Apriori{
         }
 
         while(k <= n && !Lk.isEmpty()) {
-                System.out.println("k level:  " + k);
-                System.out.println("Lk: " + Lk);
+            //System.out.println("k level:  " + k);
+            //System.out.println("Lk: " + Lk);
 
-            // Clear our the seenK and Ck for a new layer
-            seenK.clear();
+            // Clear our the seen and Ck for a new layer
+            seen.clear();
             Ck.clear();
 
             // FInd minimum support count of items in current Lk
@@ -53,26 +52,21 @@ public class Apriori{
                 }
                 // else add to frequent candidate list
                 Ck.add(kth);
-                CkMinSup.add(count);
+                // update frequent and seen sets
+                frequent.put(kth, count);
+                seen.put(kth, k);
             }
 
-            System.out.println("Ck: " + Ck);
+            //System.out.println("Ck: " + Ck);
             // if Ck is empty after finding all candidates then no candidate available and we are done
             if(Ck.isEmpty()) break;
 
-            // Add current candidates to frequent list
-            for (int i = 0; i < Ck.size(); i++) {
-                frequent.put(Ck.get(i),CkMinSup.get(i));
-                // Store frequent sets to utilize in pruning in seenK
-                seenK.put(Ck.get(i), k);
-            }
-
             List< List<Integer> > temp;
             temp = join(Ck);
-            System.out.println("Temporary: " + temp);
+            //System.out.println("Temporary: " + temp);
             Lk.clear();
-            Lk = prune(temp, seenK, k);
-            System.out.println("Pruned: " + Lk);
+            Lk = prune(temp, seen, k);
+            //System.out.println("Pruned: " + Lk);
             k++;
         }
 
@@ -106,7 +100,7 @@ public class Apriori{
     }
 
     private List<List<Integer>> prune(List<List<Integer>> temp,
-                                      HashMap<List<Integer>,Integer> seenK,
+                                      HashMap<List<Integer>,Integer> seen,
                                       int k) {
         List< List< Integer > > prunedCandidates = new ArrayList< List< Integer > >();
 
@@ -118,14 +112,14 @@ public class Apriori{
             if(k > 1) {
                 for(int i = 0; i < x.size(); i++) {
                     List< Integer > derived = new ArrayList< Integer >();
-                    // derive all subsets(k-1) of the current superset to compare with seenK
+                    // derive all subsets(k-1) of the current superset to compare with seen
                     for(int j = 0; j < x.size(); j++) {
                         if(i != j){
                             derived.add(x.get(j));
                         }
                     }
-                    // if derived subset is NOT in seenK so,  NOT frequent
-                    if(!seenK.containsKey(derived)) {
+                    // if derived subset is NOT in seen so,  NOT frequent
+                    if(!seen.containsKey(derived)) {
                         isGood = false;
                         // break and avoid adding
                         break;
@@ -137,13 +131,5 @@ public class Apriori{
             }
         }
         return prunedCandidates;
-    }
-
-    public void printPatterns() {
-        System.out.println("Frequent Itemsets");
-        for(List< Integer > pattern : frequent.keySet()) {
-            System.out.println(pattern);
-        }
-        System.out.println("Total " + frequent.size() + " itemsets");
     }
 }

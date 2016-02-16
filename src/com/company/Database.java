@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 /**
- * Created by Mourya on 2/14/2016.
+ * Created by Danny on 2/14/2016.
  */
 public class Database {
     public final List<List<Integer>> transactions;
@@ -57,30 +57,17 @@ public class Database {
     }
 
 
-    /* TODO: rewrite */
     public int scanDatabase(List<Integer> transaction) {
         int count = 0;
         for (List<Integer> row : transactions) {
-            boolean found = true;
-            for (Integer item : transaction) {
-                int idx, stp, st = 0, en = row.size(), cnt = en - st;
-                while (cnt > 0) {
-                    stp = cnt >> 1;
-                    idx = st + stp;
-                    if (row.get(idx).compareTo(item) < 0) {
-                        st = ++idx;
-                        cnt -= stp + 1;
-                    } else {
-                        cnt = stp;
-                    }
-                }
-                if (st == row.size() || row.get(st).compareTo(item) != 0) {
-                    found = false;
-                    break;
-                }
+            if (row.containsAll(transaction)){
+                //System.out.println("tra: "+ transaction);
+                //System.out.println("row: "+ row);
+                count++;
             }
-            if (found) count++;
         }
-        return count;
+        //System.out.println(count);
+        return  count;
     }
+
 }
