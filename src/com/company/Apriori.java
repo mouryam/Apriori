@@ -1,8 +1,11 @@
 package com.company;
 
 import com.sun.xml.internal.bind.v2.TODO;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.*;
+import com.sun.xml.internal.fastinfoset.sax.SystemIdResolver;
 
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by Mourya on 2/14/2016.
@@ -20,7 +23,7 @@ public class Apriori{
         this.minSup = minSup;
     }
 
-    public HashMap < List< Integer > , Integer > start() {
+    public HashMap < List<Integer>,Integer > start() {
         double startTime = System.currentTimeMillis();
 
         List< List< Integer > > Ck = new ArrayList< List< Integer > >();
@@ -38,7 +41,7 @@ public class Apriori{
         }
 
         while(k <= n && !Lk.isEmpty()) {
-                System.out.println("Step " + k);
+                System.out.println("k level:  " + k);
                 System.out.println("Lk: " + Lk);
 
             // Clear our the seenK and Ck for a new layer
@@ -68,53 +71,13 @@ public class Apriori{
                 // Store frequent sets to utilize in pruning in seenK
                 seenK.put(Ck.get(i), k);
             }
-/*
-            // Create join method
-            List< List< Integer > > temp = new ArrayList< List< Integer > >();
-            List< Integer > current = new ArrayList< Integer >();
-            for (int i=0; i<Ck.size(); i++){
-                for (int j=i+1; j<Ck.size(); j++){
-                    int last = Ck.get(j).get(Ck.get(j).size()-1);
-                    System.out.println(last);
-                    if ( !(Ck.get(i).contains(last)) ){
-                        current.clear();
-                        current.addAll(Ck.get(i));
-                        current.add(last);
-                        Collections.sort(current);
-                        if(!temp.contains(current)) {
-                            temp.add(current);
-                            System.out.println("TEMP: "+temp);
-                        }
-                    }
 
-                }
-            }
-*/
-
-            int[] prefixlen = new int[Ck.size()];
-            prefixlen[0] = 0;
-            for(int i = 1; i < Ck.size(); i++) {
-                prefixlen[i] = prefixLen(Ck.get(i-1), Ck.get(i));
-            }
-
-            List< List< Integer > > temp = new ArrayList< List< Integer > >();
-            System.out.print(Arrays.toString(prefixlen)+"\n");
-            for(int i = 0; i < Ck.size(); i++) {
-                for(int j = i + 1; j < Ck.size(); j++) {
-                    if(prefixlen[j] == k-1) {
-                        System.out.println("i:"+i+" j:"+j);
-                        System.out.println("Joining: " + i + ":" + Ck.get(i) + " + " + j + ":" + Ck.get(j) + " Prefix Length " + prefixlen[j]);
-                        temp.add(prefixJoin(Ck.get(i), Ck.get(j)));
-                    }
-                    else break;
-                }
-            }
-
+            List< List<Integer> > temp;
+            temp = join(Ck);
             System.out.println("Temporary: " + temp);
             Lk.clear();
             Lk = prune(temp, seenK, k);
             System.out.println("Pruned: " + Lk);
-
             k++;
         }
 
@@ -125,12 +88,35 @@ public class Apriori{
         return frequent;
     }
 
-    private List<List<Integer>> prune(List<List<Integer>> temp, HashMap<List<Integer>, Integer> seenK, int k) {
+    private List<List<Integer>> join(List< List<Integer> > Ck) {
+        List< List< Integer > > temp = new ArrayList< List< Integer > >();
+        List< Integer > current = new ArrayList< Integer >();
+        for (int i=0; i<Ck.size(); i++)
+            for (int j = i + 1; j < Ck.size(); j++) {
+                List<Integer> last = Ck.get(j);
+                for (Integer x : last) {
+                    if (!(Ck.get(i).contains(x))) {
+                        current = new ArrayList<Integer>();
+                        current.addAll(Ck.get(i));
+                        current.add(x);
+                        Collections.sort(current);
+                    }
+                }
+                if (!temp.contains(current)) {
+                    temp.add(current);
+                }
+
+            }
+        return temp;
+    }
+
+    private List<List<Integer>> prune(List<List<Integer>> temp,
+                                      HashMap<List<Integer>,Integer> seenK,
+                                      int k) {
         List< List< Integer > > prunedCandidates = new ArrayList< List< Integer > >();
 
         // For each set (superset) in temp check to prune or not
         for(List< Integer > x : temp) {
-            System.out.println("SEEN: "+seenK);
             boolean isGood = true;
             // only need to prune if we are in >1 layer
             // otherwise no subsets to check with
@@ -143,7 +129,6 @@ public class Apriori{
                             derived.add(x.get(j));
                         }
                     }
-                    System.out.println("derived: "+derived);
                     // if derived subset is NOT in seenK so,  NOT frequent
                     if(!seenK.containsKey(derived)) {
                         isGood = false;
@@ -165,22 +150,5 @@ public class Apriori{
             System.out.println(pattern);
         }
         System.out.println("Total " + frequent.size() + " itemsets");
-    }
-
-    private int prefixLen(List< Integer > left, List< Integer > right) {
-        int len;
-        for(len = 0; len < left.size() && len < right.size(); len++) {
-            if(left.get(len).compareTo(right.get(len)) != 0) return len;
-        }
-        return len;
-    }
-
-    private List< Integer > prefixJoin(List< Integer > left, List< Integer > right) {
-        List< Integer > ret = new ArrayList< Integer >();
-        for(Integer i : left) {
-            ret.add(i);
-        }
-        ret.add(right.get(right.size() - 1));
-        return ret;
     }
 }
