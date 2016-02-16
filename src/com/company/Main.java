@@ -1,24 +1,12 @@
 package com.company;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Main
 {
-    /*
-    // TODO: May not need
-    public static void printFile(String input) {
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream("output.txt"), "utf-8"))) {
-            writer.write(input);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    */
-
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         /* Incorrect execution command */
         if (args.length != 3) {
             System.out.println("Err: Incorrect command line arguments");
@@ -34,30 +22,31 @@ public class Main
             e.printStackTrace();
         }
 
-        /*Run Apriori algorithm */
+        /* Run Apriori algorithm */
         Apriori test = new Apriori(db, Double.parseDouble(args[1]));
-        HashMap<List<Integer>, Integer> frequentMap = new HashMap<>();
+        Map< List<Integer>, Integer > frequentMap = new HashMap<>();
 
-        frequentMap= test.start();
+        frequentMap = test.start();
         test.printPatterns();
-        //TODO Use frequentMap which contains the frequent set and frequency number as a key value to output into a file
-        /* Create output file */
+
+
+        /* Print frequentMap's data to output file */
         File f = new File("output.txt");
-        try
-        {
+        try {
             PrintWriter pw = new PrintWriter(f);
 
-			/* TODO: Print Apriori output */
-            //for each element in HashMap {
-            //    pw.print(key + " ");
-            //    pw.print( "(" + value + ")" );
-            //    pw.println();
+            for (Map.Entry< List<Integer>, Integer > entry : frequentMap.entrySet())
+            {
+                for (Integer n : entry.getKey()) pw.print(n + " ");
+
+                String value = entry.getValue().toString();
+                pw.print("(" + value + ")");
+                pw.println();
+            }
 
             pw.close();
-        }
-        catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             System.out.println(ex);
         }
     }
-
 }
