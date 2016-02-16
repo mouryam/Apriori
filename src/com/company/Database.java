@@ -1,6 +1,6 @@
 package com.company;
 
-import com.sun.xml.internal.bind.v2.TODO;
+//import com.sun.xml.internal.bind.v2.TODO;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -10,27 +10,14 @@ import java.util.*;
 /**
  * Created by Mourya on 2/14/2016.
  */
-public class Database
-{
-    /*
-    class Entry
-    {
-        public Integer first;
-        public Integer second;
-        Entry() {}
-        Entry(Integer first, Integer second) {
-            this.first = first;
-            this.second = second;
-        }
-    }
-    */
+public class Database {
+    public final List<List<Integer>> transactions;
+    public final Set<Integer> uniqEl;
 
-    private final List< List<Integer> > transactions;
-    private final Set<Integer> uniqEl;
-
-    public Database(String dataFileName) throws Exception
-    {
-        transactions = new ArrayList< List<Integer> >();
+    public Database(String dataFileName) throws Exception {
+        transactions = new ArrayList<List<Integer>>();
+        /* Create a set of unique elements */
+        uniqEl = new LinkedHashSet<>();
 
         FileInputStream fin = new FileInputStream(dataFileName);
         InputStreamReader istream = new InputStreamReader(fin);
@@ -41,14 +28,13 @@ public class Database
         double startTime = System.currentTimeMillis();
 
         /* Populate 'transactions' List with each sorted transaction */
-        while((line = stdin.readLine()) != null)
-        {
+        while ((line = stdin.readLine()) != null) {
             List<Integer> trans = new ArrayList<Integer>();
             String[] temp = line.split("\\s+");
 
-            for(String num : temp) trans.add(Integer.parseInt(num));
+            for (String num : temp) trans.add(Integer.parseInt(num));
 
-            if(trans.isEmpty()) continue;
+            if (trans.isEmpty()) continue;
 
             Collections.sort(trans);
             transactions.add(trans);
@@ -59,10 +45,6 @@ public class Database
         istream.close();
         stdin.close();
 
-
-        /* Create a set of unique elements */
-        uniqEl = new LinkedHashSet<>();
-
         for (List<Integer> t : transactions) {
             for (Integer n : t) {
                 uniqEl.add(n);
@@ -71,38 +53,33 @@ public class Database
 
 
         double endTime = System.currentTimeMillis();
-        System.out.println("Database created in " + (endTime - startTime)/1000.0 + " seconds");
+        System.out.println("Database created in " + (endTime - startTime) / 1000.0 + " seconds");
     }
 
 
-    // TODO: Alter code
-    public int scanDatabase(List<Integer> trans)
-    {
+    /* TODO: rewrite */
+    public int scanDatabase(List<Integer> transaction) {
         int count = 0;
-
-        for(List< Integer > row : transactions)
-        {
+        for (List<Integer> row : transactions) {
             boolean found = true;
-            for(Integer item : trans)
-            {
+            for (Integer item : transaction) {
                 int idx, stp, st = 0, en = row.size(), cnt = en - st;
-                while(cnt > 0)
-                {
-                    stp = cnt >> 1; idx = st + stp;
-                    if(row.get(idx).compareTo(item) < 0) {
+                while (cnt > 0) {
+                    stp = cnt >> 1;
+                    idx = st + stp;
+                    if (row.get(idx).compareTo(item) < 0) {
                         st = ++idx;
-                        cnt -= stp+1;
-                    }
-                    else {
+                        cnt -= stp + 1;
+                    } else {
                         cnt = stp;
                     }
                 }
-                if(st == row.size() || row.get(st).compareTo(item) != 0) {
+                if (st == row.size() || row.get(st).compareTo(item) != 0) {
                     found = false;
                     break;
                 }
             }
-            if(found) count++;
+            if (found) count++;
         }
         return count;
     }
