@@ -73,4 +73,37 @@ public class Database
         double endTime = System.currentTimeMillis();
         System.out.println("Database created in " + (endTime - startTime)/1000.0 + " seconds");
     }
+
+
+    // TODO: Alter code
+    public int scanDatabase(List<Integer> trans)
+    {
+        int count = 0;
+
+        for(List< Integer > row : transactions)
+        {
+            boolean found = true;
+            for(Integer item : trans)
+            {
+                int idx, stp, st = 0, en = row.size(), cnt = en - st;
+                while(cnt > 0)
+                {
+                    stp = cnt >> 1; idx = st + stp;
+                    if(row.get(idx).compareTo(item) < 0) {
+                        st = ++idx;
+                        cnt -= stp+1;
+                    }
+                    else {
+                        cnt = stp;
+                    }
+                }
+                if(st == row.size() || row.get(st).compareTo(item) != 0) {
+                    found = false;
+                    break;
+                }
+            }
+            if(found) count++;
+        }
+        return count;
+    }
 }
