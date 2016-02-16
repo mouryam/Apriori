@@ -4,18 +4,6 @@ import java.io.*;
 
 public class Main
 {
-    /*
-    // TODO: May not need
-    public static void printFile(String input) {
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream("output.txt"), "utf-8"))) {
-            writer.write(input);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    */
-
     public static void main(String[] args) {
         /* Incorrect execution command */
         if (args.length != 3) {
@@ -37,7 +25,7 @@ public class Main
         //test.start();
 
         /* Create output file */
-        File f = new File("output.txt");
+        File f = new File(args[2]);
         try
         {
             PrintWriter pw = new PrintWriter(f);
