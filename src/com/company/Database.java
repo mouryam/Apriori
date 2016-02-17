@@ -1,6 +1,8 @@
 package com.company;
 
 //import com.sun.xml.internal.bind.v2.TODO;
+import com.company.Main;
+import com.company.Apriori;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

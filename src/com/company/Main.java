@@ -1,5 +1,6 @@
 package com.company;
-
+import com.company.Database;
+import com.company.Apriori;
 import java.io.*;
 import java.util.*;
 
